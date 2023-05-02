@@ -1,8 +1,10 @@
 package com.study.searchbook.view
 
 import android.util.Log
+import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.study.searchbook.R
@@ -36,8 +38,16 @@ class BookFragment : BaseFragment<FragmentBookBinding>(R.layout.fragment_book) {
         binding.rcBook.apply {
             // 어떤 방식으로?
             layoutManager = LinearLayoutManager(requireContext())
-            // adpater 세팅
-            adapter = bookAdapter
+
+            // adpater 클릭 이벤트 세팅
+            adapter = bookAdapter.apply {
+                setBookClickListener(object: BookAdapter.BookClickListener {
+                    override fun onClick(view: View, position: Int, item: Book) {
+                        findNavController().navigate(
+                            BookFragmentDirections.actionBookFragmentToBookDetailFragment(item.link))
+                    }
+                })
+            }
 
             // 스크롤 마지막 위치 확인 20개 12 13 17
             addOnScrollListener(object : RecyclerView.OnScrollListener() {

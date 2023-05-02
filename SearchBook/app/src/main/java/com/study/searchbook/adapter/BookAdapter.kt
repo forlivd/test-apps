@@ -1,13 +1,13 @@
 package com.study.searchbook.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.study.searchbook.databinding.ItemBookBinding
 import com.study.searchbook.model.Book
-import com.study.searchbook.model.BooksInfo
 
 
 class BookAdapter: ListAdapter<Book, BookAdapter.BookItemViewHolder>(diffUtil){
@@ -17,6 +17,9 @@ class BookAdapter: ListAdapter<Book, BookAdapter.BookItemViewHolder>(diffUtil){
         // BOOK 데이터를 가져와 넣는다.
         // onBindViewHolder로 부터 아이템을 하나 가져와 Layout과 연결
         fun bind(bookModel: Book) {
+            binding.ctBookItem.setOnClickListener {
+                bookClickListener.onClick(it, layoutPosition, bookModel)
+            }
             binding.tvTitle.text = bookModel.title
             // 이미지 넣어주기 image view에
         }
@@ -37,6 +40,17 @@ class BookAdapter: ListAdapter<Book, BookAdapter.BookItemViewHolder>(diffUtil){
         //currentList는 ListAdapter의 DataList ... 이 경우 Book의 List
         //Book List [position]의 Book을 ViewHolder의 bind에 전달
         holder.bind(currentList[position])
+    }
+    
+
+    // Item 클릭 이벤트에 사용
+    interface BookClickListener {
+        fun onClick(view: View, position: Int, item: Book)
+    }
+
+    private lateinit var bookClickListener: BookClickListener
+    fun setBookClickListener(itemClickListener: BookClickListener) {
+        this.bookClickListener = itemClickListener
     }
 
 
