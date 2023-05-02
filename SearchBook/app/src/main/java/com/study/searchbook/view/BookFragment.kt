@@ -2,6 +2,8 @@ package com.study.searchbook.view
 
 import android.util.Log
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -13,6 +15,8 @@ import com.study.searchbook.base.BaseFragment
 import com.study.searchbook.databinding.FragmentBookBinding
 import com.study.searchbook.model.Book
 import kotlinx.coroutines.launch
+import com.study.searchbook.utils.Result
+import kotlinx.coroutines.flow.collect
 
 
 class BookFragment : BaseFragment<FragmentBookBinding>(R.layout.fragment_book) {
@@ -29,7 +33,6 @@ class BookFragment : BaseFragment<FragmentBookBinding>(R.layout.fragment_book) {
         initObserver()
 
         getBookInfo(20, 1)
-
     }
 
     private fun initRecyclerView() {
@@ -71,6 +74,7 @@ class BookFragment : BaseFragment<FragmentBookBinding>(R.layout.fragment_book) {
     }
 
     private fun initObserver() {
+        // getBook 으로 데이터 가져오면 Recycler 갱신
         viewLifecycleOwner.lifecycleScope.launch {
             bookViewModel.books.collect {
                 // 현재 가지고 있는 아이템 리스트 가져옴 20
@@ -82,23 +86,41 @@ class BookFragment : BaseFragment<FragmentBookBinding>(R.layout.fragment_book) {
             }
         }
 
-        // Result<> ... bookinfo를 obseving
-        // it == Result.Loading 이면 대기 띄워준다던가
-        // recycleview 마지막에 item 넣어주기 빈값
-        // submit 마지막에 하나 추가됨 > 로딩으로
-        // Success 로 오면 아이템 하나 삭제
-
-        // 전체 로딩 띄우기 -
-        // it == Result.Loading 이면 대기 띄워주기
+        // Result로 getBookInfo 시작 시 Loading을 발행하는 BookInfo observe
+        // it == Result.Loading 이면 대기 띄워줌
+        // Error 시 Error 알림
+        viewLifecycleOwner.lifecycleScope.launch {
+            bookViewModel.booksInfo.collect {
+                if (it is Result.Loading) {
+                    showProgressBar()
+                } else if (it is Result.Success) {
+                    hideProgressBar()
+                } else {
+                    hideProgressBar()
+                }
+            }
+        }
     }
 
     // 검색 버튼 누르면 호출
     // display : 몇 개씩? start : 어디서 부터? - 현재 아이템 갯수 + 1 부터 가져온다.
-    fun getBookInfo(display: Int, start: Int) {
+    private fun getBookInfo(display: Int, start: Int) {
         // 검색어 저장 및 검색
         // 안드로이드 대신 String EditText 입력
         // Room 검색어 저장
         bookViewModel.getBooks(client_id, client_secret, "안드로이드", display, start)
+    }
+
+    private fun showProgressBar() {
+        binding.pbSearchBook.visibility = View.VISIBLE
+        // 화면 클릭 막기
+        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+    }
+
+    private fun hideProgressBar() {
+        binding.pbSearchBook.visibility = View.GONE
+        // 화면 클릭 풀기
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
 }

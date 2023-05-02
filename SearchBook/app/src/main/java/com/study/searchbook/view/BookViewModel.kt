@@ -36,21 +36,22 @@ class BookViewModel @Inject constructor(
     fun getBooks(id: String, secret: String, title: String, display: Int, start: Int) {
         viewModelScope.launch(Dispatchers.IO){
             bookRepository.getBooks(id, secret, title, display, start).collectLatest {
-                if(it is Result.Success) {
-//                    // Live data
+
+                //state flow 사용
+                //if Loading booksInfo 넣기
+                if(it is Result.Loading) {
+                    _booksInfo.emit(it)
+                } else if(it is Result.Success) {
+//                    // Live data 방식, flow 하지 않음
 //                    _booksInfo.value = it
 //                    _books.value = it.data.body()!!.items
 
-                    //state flow
-                    //if Loading booksInfo 넣기
+                    //state flow 사용
+                    //success 면 _booksInfo(Loading 처리), books(Data) 다 넣기
                     _booksInfo.emit(it)
-
-                    //success 면 _booksInfo, books 다 넣기
                     _books.emit(it.data.body()!!.items)
-
                     Log.d(TAG, "Success getBooks: ${it.data.body()}")
                     Log.d(TAG, "Success _books: ${_books}")
-
                 } else if(it is Result.Error) {
 
                     Log.d(TAG, "Error getBooks: $it")

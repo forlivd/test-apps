@@ -7,6 +7,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+        <ProgressBar
+            android:id="@+id/pb_search_book"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="170dp"
+            android:background="#17020202"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
         <EditText
             android:id="@+id/et_search"
             android:layout_width="0dp"
@@ -14,9 +26,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
-
-
-
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rc_book"
