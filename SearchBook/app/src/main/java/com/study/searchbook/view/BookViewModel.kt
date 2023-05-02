@@ -53,7 +53,7 @@ class BookViewModel @Inject constructor(
                     Log.d(TAG, "Success getBooks: ${it.data.body()}")
                     Log.d(TAG, "Success _books: ${_books}")
                 } else if(it is Result.Error) {
-
+                    _booksInfo.emit(it)
                     Log.d(TAG, "Error getBooks: $it")
                 }
             }

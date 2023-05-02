@@ -2,7 +2,6 @@ package com.study.searchbook.view
 
 import android.util.Log
 import android.view.View
-import android.view.Window
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +15,6 @@ import com.study.searchbook.databinding.FragmentBookBinding
 import com.study.searchbook.model.Book
 import kotlinx.coroutines.launch
 import com.study.searchbook.utils.Result
-import kotlinx.coroutines.flow.collect
 
 
 class BookFragment : BaseFragment<FragmentBookBinding>(R.layout.fragment_book) {
@@ -91,13 +89,19 @@ class BookFragment : BaseFragment<FragmentBookBinding>(R.layout.fragment_book) {
         // Error 시 Error 알림
         viewLifecycleOwner.lifecycleScope.launch {
             bookViewModel.booksInfo.collect {
-                if (it is Result.Loading) {
+
+                if(it is Result.Loading) {
                     showProgressBar()
-                } else if (it is Result.Success) {
-                    hideProgressBar()
                 } else {
                     hideProgressBar()
                 }
+
+                // Message는 다 다르게, 오류가 직접적으로 드러나는 건 좋지 않지만 ... Test하려면?
+                if(it is Result.Error) {
+                    //Error에 따라 동작 처리
+                    ErrorDialog(it.exception.message).show(requireActivity().supportFragmentManager,"ErrorDialog")
+                }
+
             }
         }
     }
