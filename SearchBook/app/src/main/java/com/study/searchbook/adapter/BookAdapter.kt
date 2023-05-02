@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.study.searchbook.databinding.ItemBookBinding
 import com.study.searchbook.model.Book
 
@@ -21,7 +22,11 @@ class BookAdapter: ListAdapter<Book, BookAdapter.BookItemViewHolder>(diffUtil){
                 bookClickListener.onClick(it, layoutPosition, bookModel)
             }
             binding.tvTitle.text = bookModel.title
+
             // 이미지 넣어주기 image view에
+            Glide.with(binding.root).load(bookModel.image)
+                .override(150,200)
+                .into(binding.ivBook)
         }
     }
 
