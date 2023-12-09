@@ -6,5 +6,5 @@
 
 - Compose 임시 
 
-- Foreground Service 이용한 시간 측정
+- Foreground Service 이용한 시간 측정, Notification
 
